@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxTimer;
 import flixel.util.FlxRandom;
 import entities.Target;
 import flixel.system.FlxSound;
@@ -18,6 +19,7 @@ class PlayState extends FlxState
 
     var targets:FlxTypedGroup<Target>;
     var musicTrack:FlxSound;
+    var bpm = .5;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -34,22 +36,14 @@ class PlayState extends FlxState
 
 		for(i in 0...4){
             var tar = new Target(FlxRandom.floatRanged(75, FlxG.width-75), FlxRandom.floatRanged(75, FlxG.height-75), ClickType.LEFTCLICK);
-            tar.setTimes(10, 15, 5);
+            tar.setTimes(5, 10, 5);
             targets.add(tar);
         }
 
         add(targets);
-	}
 
-    private function CheckTargets():Void {
-        for (tar in targets){
-            if (FlxCollision.pixelPerfectPointCheck(Std.int(FlxG.mouse.x), Std.int(FlxG.mouse.y), tar)){
-                if (FlxG.mouse.pressed || FlxG.mouse.pressedRight) {
-                    tar.clicked(musicTrack.time/1000);
-                }
-            }
-        }
-    }
+        startPulse();
+	}
 
 /**
 	 * Function that is called when this state is destroyed - you might want to 
@@ -67,14 +61,33 @@ class PlayState extends FlxState
 	{
 		super.update();
 
-        targets.callAll("updateTime", [musicTrack.time/1000]);
-
-        CheckTargets();
+        updateTargets();
 
         FlxG.watch.addQuick("Music Time", musicTrack.time/1000);
-
         FlxG.watch.addQuick("Left Click", FlxG.mouse.justPressed);
         FlxG.watch.addQuick("Right Click", FlxG.mouse.justPressedRight);
         FlxG.watch.addQuick("Middle Click", FlxG.mouse.justPressedMiddle);
+    }
+
+
+    private function updateTargets():Void {
+        targets.callAll("updateTime", [musicTrack.time/1000]);
+
+        for (tar in targets){
+            if (FlxCollision.pixelPerfectPointCheck(Std.int(FlxG.mouse.x), Std.int(FlxG.mouse.y), tar)){
+                if (FlxG.mouse.pressed || FlxG.mouse.pressedRight) {
+                    tar.clicked(musicTrack.time/1000);
+                }
+            }
+        }
+    }
+
+    private function startPulse():Void {
+        var pulseTimer = new FlxTimer();
+        pulseTimer.start(bpm, onPulse, 0);
+    }
+
+    private function onPulse(timer:FlxTimer):Void {
+        targets.callAll("pulse");
     }
 }

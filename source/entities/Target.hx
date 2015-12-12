@@ -1,4 +1,5 @@
 package entities;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxColorUtil;
 import flixel.FlxG;
@@ -17,6 +18,8 @@ class Target extends FlxSprite {
     var difficultyOffset:Float;
     var type:ClickType;
     var musicTime:Float;
+
+    var pulseSizeOffset = 1.15;
 
     // Temp vars
     public var w = 75;
@@ -85,5 +88,10 @@ class Target extends FlxSprite {
                     }
             }
         }
+    }
+
+    public function pulse():Void {
+        this.scale.set(1.15, 1.15);
+        FlxTween.tween(this.scale, {x:1, y:1}, .25);
     }
 }
