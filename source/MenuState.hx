@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -18,6 +19,7 @@ class MenuState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+        FlxG.camera.bgColor = 0xFFF7FDFF;
 
 		FlxG.switchState(new PlayState());
 	}

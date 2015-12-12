@@ -1,5 +1,7 @@
 package;
 
+import openfl.Assets;
+import flixel.FlxSprite;
 import flixel.util.FlxTimer;
 import flixel.util.FlxRandom;
 import entities.Target;
@@ -28,17 +30,16 @@ class PlayState extends FlxState
 	{
 		super.create();
 
+        var background = new FlxSprite(0, 0, AssetPaths.background__png);
+        add(background);
+
         musicTrack = new FlxSound();
         FlxG.sound.music = musicTrack;
         FlxG.sound.playMusic(AssetPaths.LD34Mix01_01__mp3, 1, false);
 
         targets = new FlxTypedGroup<Target>();
 
-		for(i in 1...5){
-            var tar = new Target(FlxRandom.floatRanged(75, FlxG.width-75), FlxRandom.floatRanged(75, FlxG.height-75), ClickType.LEFTCLICK);
-            tar.setTimes(i+4.5, i+4.75, .25);
-            targets.add(tar);
-        }
+		parseTargets('assets/data/level00.txt');
 
         add(targets);
 
@@ -89,5 +90,25 @@ class PlayState extends FlxState
 
     private function onPulse(timer:FlxTimer):Void {
         targets.callAll("pulse");
+    }
+
+    private function parseTargets(file:String):Void {
+        var fileText = Assets.getText(file);
+        for (line in fileText.split('\n')) {
+            var options = line.split(',');
+            var tar:Target;
+            if (options[0] == "right"){
+                tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RIGHTCLICK, bpm);
+            } else if (options[0] == "left"){
+                tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.LEFTCLICK, bpm);
+            } else if (options[0] == "both") {
+                tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.BOTHCLICK, bpm);
+            } else {
+                tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RANDOM, bpm);
+            }
+
+            tar.setTimes(Std.parseFloat(options[3]), bpm/2);
+            targets.add(tar);
+        }
     }
 }
