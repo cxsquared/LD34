@@ -30,13 +30,13 @@ class PlayState extends FlxState
 
         musicTrack = new FlxSound();
         FlxG.sound.music = musicTrack;
-        FlxG.sound.playMusic(AssetPaths.HaxeFlixel_Tutorial_Game__mp3, 1, false);
+        FlxG.sound.playMusic(AssetPaths.LD34Mix01_01__mp3, 1, false);
 
         targets = new FlxTypedGroup<Target>();
 
-		for(i in 0...4){
+		for(i in 1...5){
             var tar = new Target(FlxRandom.floatRanged(75, FlxG.width-75), FlxRandom.floatRanged(75, FlxG.height-75), ClickType.LEFTCLICK);
-            tar.setTimes(5, 10, 5);
+            tar.setTimes(i+4.5, i+4.75, .25);
             targets.add(tar);
         }
 
