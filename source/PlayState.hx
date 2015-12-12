@@ -1,5 +1,6 @@
 package;
 
+import flixel.text.FlxText;
 import openfl.Assets;
 import flixel.FlxSprite;
 import flixel.util.FlxTimer;
@@ -23,6 +24,9 @@ class PlayState extends FlxState
     var musicTrack:FlxSound;
     var bpm = .5;
 
+    var startText:FlxText;
+    var startTimer:FlxTimer;
+
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
@@ -33,18 +37,28 @@ class PlayState extends FlxState
         var background = new FlxSprite(0, 0, AssetPaths.background__png);
         add(background);
 
+        startText = new FlxText(0,0, 0, 24);
+        startText.text = "3";
+        startText.x = FlxG.width/2 - startText.width/2;
+        startText.y = FlxG.height/2 - startText.height/2;
+        add(startText);
+
         musicTrack = new FlxSound();
         FlxG.sound.music = musicTrack;
-        FlxG.sound.playMusic(AssetPaths.LD34Mix01_01__mp3, 1, false);
 
         targets = new FlxTypedGroup<Target>();
-
-		parseTargets('assets/data/level00.txt');
-
+        parseTargets('assets/data/level00.txt');
         add(targets);
 
-        startPulse();
+        startTimer = new FlxTimer();
+        startTimer.start(3, startLevel, 1);
 	}
+
+    private function startLevel(timer:FlxTimer):Void {
+        startText.kill();
+        FlxG.sound.playMusic(AssetPaths.LD34Mix01_01__mp3, 1, false);
+        startPulse();
+    }
 
 /**
 	 * Function that is called when this state is destroyed - you might want to 
@@ -63,6 +77,10 @@ class PlayState extends FlxState
 		super.update();
 
         updateTargets();
+
+        if (startText.alive && startTimer.active) {
+            startText.text = Std.string(Math.ceil(startTimer.timeLeft));
+        }
 
         FlxG.watch.addQuick("Music Time", musicTrack.time/1000);
         FlxG.watch.addQuick("Left Click", FlxG.mouse.justPressed);
@@ -107,7 +125,7 @@ class PlayState extends FlxState
                 tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RANDOM, bpm);
             }
 
-            tar.setTimes(Std.parseFloat(options[3]), bpm/2);
+            tar.setTimes(Std.parseFloat(options[3]), Std.parseFloat(options[4]), bpm/2);
             targets.add(tar);
         }
     }

@@ -1,4 +1,6 @@
 package entities;
+import flixel.tweens.FlxEase;
+import flixel.plugin.TweenManager;
 import flixel.util.FlxRandom;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
@@ -59,8 +61,8 @@ class Target extends FlxSprite {
         }
     }
 
-    public function setTimes(TargetTime:Float, DifficultyOffset:Float):Void {
-        this.triggerTime = TargetTime - bpm;
+    public function setTimes(TargetTime:Float, TriggerOffset:Float, DifficultyOffset:Float):Void {
+        this.triggerTime = TargetTime - TriggerOffset;
         this.targetTime = TargetTime;
         this.difficultyOffset = DifficultyOffset;
     }
@@ -73,7 +75,7 @@ class Target extends FlxSprite {
         if (triggerTime <= musicTime && !this.visible) {
             this.alpha = 0;
             this.visible = true;
-            FlxTween.tween(this, {alpha:1}, bpm);
+            FlxTween.tween(this, {alpha:1}, bpm, {ease:FlxEase.expoIn});
         }
 
         if (targetTime+difficultyOffset <= musicTime) {
@@ -87,7 +89,7 @@ class Target extends FlxSprite {
         if (targetTime - difficultyOffset <= musicTime && targetTime + difficultyOffset >= musicTime) {
             switch(type) {
                 case ClickType.BOTHCLICK:
-                    if (FlxG.mouse.justPressed && FlxG.mouse.justPressedRight){
+                    if ((FlxG.mouse.justPressed && FlxG.mouse.pressedRight) || (FlxG.mouse.justPressedRight && FlxG.mouse.pressed) ){
                         FlxG.log.add("Both Clicked on Target");
                         kill();
                     }
@@ -98,7 +100,7 @@ class Target extends FlxSprite {
                     }
                 case ClickType.RIGHTCLICK:
                     if (FlxG.mouse.justPressedRight && !FlxG.mouse.justPressed){
-                        FlxG.log.add("Both Clicked on Target");
+                        FlxG.log.add("Right Clicked on Target");
                         kill();
                     }
                 case ClickType.RANDOM:
