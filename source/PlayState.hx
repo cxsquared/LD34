@@ -1,20 +1,14 @@
 package;
 
-import flash.display.Sprite;
-import flixel.text.FlxTextField;
+import flixel.util.FlxRandom;
+import entities.Target;
+import flixel.system.FlxSound;
 import flixel.group.FlxTypedGroup;
 import flixel.util.FlxCollision;
-import flixel.util.FlxColor;
-import flixel.plugin.MouseEventManager;
-import flixel.addons.plugin.FlxMouseControl;
-import flixel.interfaces.IFlxInput;
 import flixel.input.mouse.FlxMouse;
 import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.text.FlxText;
-import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
+
 
 /**
  * A FlxState which can be used for the actual gameplay.
@@ -22,8 +16,8 @@ import flixel.util.FlxMath;
 class PlayState extends FlxState
 {
 
-    var square:FlxSprite;
-    var targets:FlxTypedGroup<FlxSprite>;
+    var targets:FlxTypedGroup<Target>;
+    var musicTrack:FlxSound;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -32,27 +26,26 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-		square = new FlxSprite();
-        square.makeGraphic(100, 100);
-        square.x = FlxG.width/2 - square.width/2;
-        square.y = FlxG.height/2 - square.height/2;
+        musicTrack = new FlxSound();
+        FlxG.sound.music = musicTrack;
+        FlxG.sound.playMusic(AssetPaths.HaxeFlixel_Tutorial_Game__mp3, 1, false);
 
-        targets = new FlxTypedGroup<FlxSprite>();
-        targets.add(square);
+        targets = new FlxTypedGroup<Target>();
+
+		for(i in 0...4){
+            var tar = new Target(FlxRandom.floatRanged(75, FlxG.width-75), FlxRandom.floatRanged(75, FlxG.height-75), ClickType.LEFTCLICK);
+            tar.setTimes(10, 15, 5);
+            targets.add(tar);
+        }
 
         add(targets);
-
 	}
 
     private function CheckTargets():Void {
-        for (spr in targets){
-            if (FlxCollision.pixelPerfectPointCheck(Std.int(FlxG.mouse.x), Std.int(FlxG.mouse.y), spr)){
-                if (FlxG.mouse.justPressed && FlxG.mouse.justPressedRight){
-                    spr.color = FlxColor.RED;
-                } else if (FlxG.mouse.justPressed){
-                    spr.color = FlxColor.BLUE;
-                } else if (FlxG.mouse.justPressedRight){
-                    spr.color = FlxColor.GREEN;
+        for (tar in targets){
+            if (FlxCollision.pixelPerfectPointCheck(Std.int(FlxG.mouse.x), Std.int(FlxG.mouse.y), tar)){
+                if (FlxG.mouse.pressed || FlxG.mouse.pressedRight) {
+                    tar.clicked(musicTrack.time/1000);
                 }
             }
         }
@@ -74,9 +67,11 @@ class PlayState extends FlxState
 	{
 		super.update();
 
+        targets.callAll("updateTime", [musicTrack.time/1000]);
+
         CheckTargets();
 
-        FlxG.watch.addQuick("Mouse over", FlxCollision.pixelPerfectPointCheck(Std.int(FlxG.mouse.x), Std.int(FlxG.mouse.y), square));
+        FlxG.watch.addQuick("Music Time", musicTrack.time/1000);
 
         FlxG.watch.addQuick("Left Click", FlxG.mouse.justPressed);
         FlxG.watch.addQuick("Right Click", FlxG.mouse.justPressedRight);
