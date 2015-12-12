@@ -114,19 +114,21 @@ class PlayState extends FlxState
         var fileText = Assets.getText(file);
         for (line in fileText.split('\n')) {
             var options = line.split(',');
-            var tar:Target;
-            if (options[0] == "right"){
-                tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RIGHTCLICK, bpm);
-            } else if (options[0] == "left"){
-                tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.LEFTCLICK, bpm);
-            } else if (options[0] == "both") {
-                tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.BOTHCLICK, bpm);
-            } else {
-                tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RANDOM, bpm);
-            }
+            if (options[0] != "//"){
+                var tar:Target;
+                if (options[0] == "right"){
+                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RIGHTCLICK, bpm);
+                } else if (options[0] == "left"){
+                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.LEFTCLICK, bpm);
+                } else if (options[0] == "both") {
+                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.BOTHCLICK, bpm);
+                } else {
+                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RANDOM, bpm);
+                }
 
-            tar.setTimes(Std.parseFloat(options[3]), Std.parseFloat(options[4]), bpm/2);
-            targets.add(tar);
+                tar.setTimes(Std.parseFloat(options[3]), Std.parseFloat(options[4]), bpm/2);
+                targets.add(tar);
+            }
         }
     }
 }

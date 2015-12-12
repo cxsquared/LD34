@@ -1,3 +1,4 @@
+//,This is a test comment
 left,25,25,1,.9
 both,100,100,5,1
 right,175,175,9,1
@@ -7,6 +8,7 @@ left,350,50,17,.5
 left,300,50,18,.5
 left,250,50,19,.5
 both,300,205,20,1
+//, This hopefully won't break anything
 both,300,205,22,1
 right,100,400,24,1
 right,150,400,25,.5
