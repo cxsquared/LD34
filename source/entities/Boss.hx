@@ -61,6 +61,7 @@ class Boss extends FlxSprite {
         for (i in 0...75) {
             var explode = new Explosion(FlxRandom.floatRanged(this.x, this.x+this.width), FlxRandom.floatRanged(this.y, this.y+this.height), this.state);
         }
+        FlxG.sound.play("assets/sounds/explosion.wav", 0.5);
     }
 
     private function fire():Void {

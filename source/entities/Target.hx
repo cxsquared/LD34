@@ -84,7 +84,6 @@ class Target extends FlxSprite {
 
         if (targetTime+difficultyOffset <= musicTime) {
             state.score--;
-            state.setPlayerScale(-0.05);
             this.kill();
         }
     }
@@ -124,7 +123,6 @@ class Target extends FlxSprite {
             if (this.alive && this.type != ClickType.BOTHCLICK) {
                 state.score--;
                 playGlicth();
-                state.setPlayerScale(-0.05);
                 kill();
             }
         }

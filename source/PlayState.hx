@@ -33,6 +33,7 @@ class PlayState extends FlxState
 
     var startText:FlxText;
     var startTimer:FlxTimer;
+    var starting:Bool = false;
 
     public var score = 0;
     var scoreText:FlxText;
@@ -46,6 +47,9 @@ class PlayState extends FlxState
 
     var explosion:FlxEmitterExt;
 
+    var instruct:FlxSprite;
+    var instructText:FlxText;
+
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
@@ -58,15 +62,14 @@ class PlayState extends FlxState
         var background = new FlxSprite(0, 0, AssetPaths.background__png);
         add(background);
 
+        createInstruct();
+
         musicTrack = new FlxSound();
         FlxG.sound.music = musicTrack;
 
         targets = new FlxTypedGroup<Target>();
         parseTargets('assets/data/level00.txt');
         add(targets);
-
-        startTimer = new FlxTimer();
-        startTimer.start(3, startLevel, 1);
 
         createBoss();
 
@@ -77,11 +80,50 @@ class PlayState extends FlxState
         createExplosion();
 	}
 
+    private function createInstruct():Void {
+        instruct = new FlxSprite(FlxG.width/2-100, FlxG.height-160, AssetPaths.instruct__png);
+        instruct.alpha = 0;
+        FlxTween.tween(instruct, {alpha:1}, .5);
+
+        instructText = new FlxText(FlxG.width/2-125,FlxG.height-80,0);
+        instructText.setFormat("assets/data/BebasNeue.ttf", 32, FlxColor.GRAY, "center");
+        instructText.text = "Left Click     Right Click";
+        instructText.alpha = 0;
+        FlxTween.tween(instructText, {alpha:1}, 1);
+
+        add(instruct);
+        add(instructText);
+
+        var instuctTimer = new FlxTimer();
+        instuctTimer.start(4, function(timer:FlxTimer):Void {
+            startTimer = new FlxTimer();
+            startTimer.start(3, startLevel, 1);
+
+            var countdownTimer = new FlxTimer();
+            countdownTimer.start(1, countDown, 2);
+            FlxG.sound.play("assets/sounds/countdown.wav", 0.25);
+
+            FlxTween.tween(scoreText, {alpha:1}, 1);
+            FlxTween.tween(startText, {alpha:1}, .5);
+            starting = true;
+
+            FlxTween.tween(instruct, {alpha:0}, .5, {complete:function(tween:FlxTween):Void {
+                instruct.kill();
+                instructText.kill();
+            }});
+            FlxTween.tween(instructText, {alpha:0}, .25);
+        }, 1);
+    }
+
     private function startLevel(timer:FlxTimer):Void {
         startText.kill();
         musicTrack.loadEmbedded(AssetPaths.LD34Mix01_01__mp3, false, false, onSongEnd);
         musicTrack.play();
         startPulse();
+    }
+
+    private function countDown(timer:FlxTimer):Void {
+        FlxG.sound.play("assets/sounds/countdown.wav", 0.5);
     }
 
     private function createExplosion():Void {
@@ -114,6 +156,7 @@ class PlayState extends FlxState
         startText.setFormat("assets/data/BebasNeue.ttf", 72, FlxColor.GRAY, "center");
         startText.x = FlxG.width/2 - startText.width/2;
         startText.y = FlxG.height/2 - startText.height/2;
+        startText.alpha = 0;
         add(startText);
 
         scoreText = new FlxText(0,0,0,36);
@@ -122,6 +165,7 @@ class PlayState extends FlxState
         scoreText.y = 5;
         scoreText.setFormat("assets/data/BebasNeue.ttf", 36, FlxColor.GRAY, "center");
         scoreText.color = FlxColor.GRAY;
+        scoreText.alpha = 0;
         add(scoreText);
     }
 
@@ -173,13 +217,15 @@ class PlayState extends FlxState
 
         updateBoss();
 
-        if (score < 0){
-            score = 0;
-        }
-        scoreText.text = Std.string(score);
+        if (starting) {
+            if (score < 0){
+                score = 0;
+            }
+            scoreText.text = Std.string(score);
 
-        if (startText.alive && startTimer.active) {
-            startText.text = Std.string(Math.ceil(startTimer.timeLeft));
+            if (startText.alive && startTimer.active) {
+                startText.text = Std.string(Math.ceil(startTimer.timeLeft));
+            }
         }
 
         if (isLevelDone && FlxG.mouse.justPressed){
@@ -216,6 +262,7 @@ class PlayState extends FlxState
         score--;
         this.setPlayerScale(-0.05);
         bullet.kill();
+        FlxG.camera.shake(0.005, 0.15);
     }
 
 

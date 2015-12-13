@@ -35,9 +35,9 @@ class MenuState extends FlxState
 
         title = new FlxText(0,0,0,48);
         title.color = FlxColor.GRAY;
-        title.text = "Working Title";
+        title.text = "Duality";
         title.y = 100;
-        title.x = FlxG.width/2 - title.width/2 - 100;
+        title.x = FlxG.width/2 - title.width/2 - 57;
         title.alpha = 0;
         title.setFormat("assets/data/BebasNeue.ttf", 48, FlxColor.GRAY, "center");
         FlxTween.tween(title, {alpha:1}, 1);
