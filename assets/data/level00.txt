@@ -1,4 +1,5 @@
-//,This is a test comment
+//, Screen Size 640, 480, Bottom corner 565 405, Middle 283 203
+//,Intro
 left,25,25,1,.9
 both,100,100,5,1
 right,175,175,9,1
@@ -8,7 +9,6 @@ left,350,50,17,.5
 left,300,50,18,.5
 left,250,50,19,.5
 both,300,205,20,1
-//, This hopefully won't break anything
 both,300,205,22,1
 right,100,400,24,1
 right,150,400,25,.5
@@ -16,3 +16,20 @@ right,200,400,26,.5
 right,250,400,27,.5
 both,300,205,28,1
 both,300,205,30,1
+//, Bass comes in
+left,383,400,31.75,1
+left,383,400,33.25,1
+right,383,10,33.75,.5
+right,183,10,35.75,1
+right,183,10,37.25,1
+left,183,400,37.75,.5
+both,283,203,39,1
+right,383,10,39.75,1
+right,383,10,41.25,1
+left,383,400,41.75,.5
+left,183,400,43.75,1
+left,183,400,45.25,1
+right,183,10,45.75,.5
+both,283,203,47,1
+//,Piano enters
+
