@@ -22,10 +22,13 @@ class PlayState extends FlxState
 
     var targets:FlxTypedGroup<Target>;
     var musicTrack:FlxSound;
-    var bpm = .5;
+    public var bpm = .5;
 
     var startText:FlxText;
     var startTimer:FlxTimer;
+
+    public var score = 0;
+    var scoreText:FlxText;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -37,11 +40,17 @@ class PlayState extends FlxState
         var background = new FlxSprite(0, 0, AssetPaths.background__png);
         add(background);
 
-        startText = new FlxText(0,0, 0, 24);
+        startText = new FlxText(0,0,0,72);
         startText.text = "3";
         startText.x = FlxG.width/2 - startText.width/2;
         startText.y = FlxG.height/2 - startText.height/2;
         add(startText);
+
+        scoreText = new FlxText(0,0,0,36);
+        scoreText.text = "0";
+        scoreText.x = FlxG.width/2 - scoreText.width/2;
+        scoreText.y = 5;
+        add(scoreText);
 
         musicTrack = new FlxSound();
         FlxG.sound.music = musicTrack;
@@ -77,6 +86,8 @@ class PlayState extends FlxState
 		super.update();
 
         updateTargets();
+
+        scoreText.text = Std.string(score);
 
         if (startText.alive && startTimer.active) {
             startText.text = Std.string(Math.ceil(startTimer.timeLeft));
@@ -117,13 +128,13 @@ class PlayState extends FlxState
             if (options[0] != "//"){
                 var tar:Target;
                 if (options[0] == "right"){
-                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RIGHTCLICK, bpm);
+                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RIGHTCLICK, this);
                 } else if (options[0] == "left"){
-                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.LEFTCLICK, bpm);
+                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.LEFTCLICK, this);
                 } else if (options[0] == "both") {
-                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.BOTHCLICK, bpm);
+                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.BOTHCLICK, this);
                 } else {
-                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RANDOM, bpm);
+                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RANDOM, this);
                 }
 
                 tar.setTimes(Std.parseFloat(options[3]), Std.parseFloat(options[4]), bpm/2);

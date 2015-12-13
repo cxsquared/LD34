@@ -25,16 +25,20 @@ class Target extends FlxSprite {
 
     var pulseSizeOffset = 1.15;
     var bpm:Float;
+    var state:PlayState;
+
+    var scoreIncrease = 5;
 
     // Temp vars
     public var w = 75;
     public var h = 75;
 
-    public function new(X:Float = 0, Y:Float = 0, Type:ClickType, Bpm:Float) {
+    public function new(X:Float = 0, Y:Float = 0, Type:ClickType, State:PlayState) {
         super(X, Y);
 
         this.visible = false;
-        this.bpm = Bpm;
+        this.state = State;
+        this.bpm = State.bpm;
 
         setType(Type);
     }
@@ -91,16 +95,19 @@ class Target extends FlxSprite {
                 case ClickType.BOTHCLICK:
                     if ((FlxG.mouse.justPressed && FlxG.mouse.pressedRight) || (FlxG.mouse.justPressedRight && FlxG.mouse.pressed) ){
                         FlxG.log.add("Both Clicked on Target");
+                        state.score += scoreIncrease;
                         kill();
                     }
                 case ClickType.LEFTCLICK:
                     if (FlxG.mouse.justPressed && !FlxG.mouse.justPressedRight){
                         FlxG.log.add("Left Clicked on Target");
+                        state.score += scoreIncrease;
                         kill();
                     }
                 case ClickType.RIGHTCLICK:
                     if (FlxG.mouse.justPressedRight && !FlxG.mouse.justPressed){
                         FlxG.log.add("Right Clicked on Target");
+                        state.score += scoreIncrease;
                         kill();
                     }
                 case ClickType.RANDOM:
