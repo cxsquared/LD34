@@ -1,5 +1,8 @@
 package;
 
+import flixel.util.FlxColor;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.text.FlxText;
 import openfl.Assets;
 import flixel.FlxSprite;
@@ -50,6 +53,7 @@ class PlayState extends FlxState
         scoreText.text = "0";
         scoreText.x = FlxG.width/2 - scoreText.width/2;
         scoreText.y = 5;
+        scoreText.color = FlxColor.GRAY;
         add(scoreText);
 
         musicTrack = new FlxSound();
@@ -119,6 +123,8 @@ class PlayState extends FlxState
 
     private function onPulse(timer:FlxTimer):Void {
         targets.callAll("pulse");
+        scoreText.scale.set(1.15, 1.15);
+        FlxTween.tween(scoreText.scale, {x:1, y:1}, bpm/2, {ease:FlxEase.expoOut});
     }
 
     private function parseTargets(file:String):Void {
