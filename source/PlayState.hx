@@ -47,6 +47,7 @@ class PlayState extends FlxState
         startText = new FlxText(0,0,0,72);
         startText.text = "3";
         startText.color = FlxColor.GRAY;
+        startText.setFormat("assets/data/BebasNeue.ttf", 72, FlxColor.GRAY, "center");
         startText.x = FlxG.width/2 - startText.width/2;
         startText.y = FlxG.height/2 - startText.height/2;
         add(startText);
@@ -55,6 +56,7 @@ class PlayState extends FlxState
         scoreText.text = "0";
         scoreText.x = FlxG.width/2 - scoreText.width/2;
         scoreText.y = 5;
+        scoreText.setFormat("assets/data/BebasNeue.ttf", 36, FlxColor.GRAY, "center");
         scoreText.color = FlxColor.GRAY;
         add(scoreText);
 
@@ -81,14 +83,13 @@ class PlayState extends FlxState
         endText.text = "Level Finished";
         endText.color = FlxColor.GRAY;
         endText.alpha = 0;
+        endText.setFormat("assets/data/BebasNeue.ttf", 32, FlxColor.GRAY, "center");
         FlxTween.tween(endText, {alpha:1}, 1);
         add(endText);
-        endText.x = FlxG.width/2 - 150;
+        endText.x = FlxG.width/2 - endText.width/2 - 55;
         endText.y = FlxG.height/2 - endText.height - endText.height/2 - 10;
 
-        scoreText.size = 32;
         scoreText.y = FlxG.height/2 - scoreText.height/2;
-        scoreText.x = FlxG.width/2 - scoreText.height/2;
         scoreText.alpha = 0;
         FlxTween.tween(scoreText, {alpha:1}, 1);
 
@@ -96,11 +97,12 @@ class PlayState extends FlxState
         endText2.color = FlxColor.GRAY;
         endText2.text = "Click to Restart";
         endText2.alpha = 0;
+        endText2.setFormat("assets/data/BebasNeue.ttf", 32, FlxColor.GRAY, "center");
         FlxTween.tween(endText2, {alpha:1}, 1, {complete:function(tween:FlxTween):Void {
             isLevelDone = true;
         }});
         add(endText2);
-        endText2.x = FlxG.width/2 - 150;
+        endText2.x = FlxG.width/2 - endText2.width/2 - 60;
         endText2.y = FlxG.height/2 + endText2.height/2 + 10;
     }
 
