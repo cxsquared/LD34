@@ -36,6 +36,7 @@ class PlayState extends FlxState
     var isLevelDone = false;
 
     var boss:Boss;
+    var player:FlxSprite;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -44,9 +45,49 @@ class PlayState extends FlxState
 	{
 		super.create();
 
+        FlxG.mouse.visible = false;
+
         var background = new FlxSprite(0, 0, AssetPaths.background__png);
         add(background);
 
+        musicTrack = new FlxSound();
+        FlxG.sound.music = musicTrack;
+
+        targets = new FlxTypedGroup<Target>();
+        parseTargets('assets/data/level00.txt');
+        add(targets);
+
+        startTimer = new FlxTimer();
+        startTimer.start(3, startLevel, 1);
+
+        createBoss();
+
+        createPlayer();
+
+        createUI();
+	}
+
+    private function startLevel(timer:FlxTimer):Void {
+        startText.kill();
+        musicTrack.loadEmbedded(AssetPaths.LD34Mix01_01__mp3, false, false, onSongEnd);
+        musicTrack.play();
+        startPulse();
+    }
+
+    private function createBoss():Void {
+        boss = new Boss(0,0,this);
+        boss.x = FlxG.width - boss.width;
+        boss.y = FlxG.height/2 - boss.height/2;
+        add(boss);
+    }
+
+    private function createPlayer():Void {
+        player = new FlxSprite(0,0,AssetPaths.player__png);
+        player.scale.set(0.5, 0.5);
+        add(player);
+    }
+
+    private function createUI():Void {
         startText = new FlxText(0,0,0,72);
         startText.text = "3";
         startText.color = FlxColor.GRAY;
@@ -62,32 +103,6 @@ class PlayState extends FlxState
         scoreText.setFormat("assets/data/BebasNeue.ttf", 36, FlxColor.GRAY, "center");
         scoreText.color = FlxColor.GRAY;
         add(scoreText);
-
-        musicTrack = new FlxSound();
-        FlxG.sound.music = musicTrack;
-
-        targets = new FlxTypedGroup<Target>();
-        parseTargets('assets/data/level00.txt');
-        add(targets);
-
-        startTimer = new FlxTimer();
-        startTimer.start(3, startLevel, 1);
-
-        createBoss();
-	}
-
-    private function startLevel(timer:FlxTimer):Void {
-        startText.kill();
-        musicTrack.loadEmbedded(AssetPaths.LD34Mix01_01__mp3, false, false, onSongEnd);
-        musicTrack.play();
-        startPulse();
-    }
-
-    private function createBoss():Void {
-        boss = new Boss(0,0,this);
-        boss.x = FlxG.width - boss.width;
-        boss.y = FlxG.height/2 - boss.height/2;
-        add(boss);
     }
 
     private function onSongEnd():Void {
@@ -146,6 +161,8 @@ class PlayState extends FlxState
             FlxG.switchState(new MenuState());
         }
 
+        updatePlayer();
+
         FlxG.watch.addQuick("Music Time", musicTrack.time/1000);
         FlxG.watch.addQuick("Left Click", FlxG.mouse.justPressed);
         FlxG.watch.addQuick("Right Click", FlxG.mouse.justPressedRight);
@@ -163,6 +180,11 @@ class PlayState extends FlxState
                 }
             }
         }
+    }
+
+    private function updatePlayer():Void {
+        player.x = FlxG.mouse.x - player.width/2;
+        player.y = FlxG.mouse.y - player.height/2;
     }
 
     private function startPulse():Void {
@@ -200,5 +222,21 @@ class PlayState extends FlxState
                 targets.add(tar);
             }
         }
+    }
+
+    public function setPlayerScale(IncreaseAmount:Float):Void {
+        var newX = player.scale.x + IncreaseAmount;
+        var newY = player.scale.y + IncreaseAmount;
+
+        if (newX > 1){
+            newX = 1;
+        }
+
+        if (newY > 1) {
+            newY = 1;
+        }
+
+        player.scale.set(newX, newY);
+
     }
 }

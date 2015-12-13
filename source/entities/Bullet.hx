@@ -7,12 +7,15 @@ class Bullet extends FlxSprite {
 
     var speed:Float;
     var dir:Float;
+    var sin = false;
+    var sinSpeed:Float;
+    var sinAmount:Float;
 
     public function new(X:Float, Y:Float, Speed:Float, Dir:Float) {
         super(X, Y);
         this.speed = Speed;
         this.dir = Dir;
-        makeGraphic(8,4,FlxColorUtil.getRandomColor());
+        loadGraphic(AssetPaths.bullet__png);
     }
 
     override public function update():Void {
@@ -22,9 +25,19 @@ class Bullet extends FlxSprite {
         }
 
         this.x += speed * Math.sin(dir) * FlxG.elapsed;
+        if (sin){
+            this.y += (Math.sin(FlxG.elapsed*this.x*sinSpeed) * sinAmount);
+        }
         this.y += speed * Math.cos(dir) * FlxG.elapsed;
+
 
         FlxG.watch.addQuick("Bullet X", x);
         FlxG.watch.addQuick("Bullet y", y);
+    }
+
+    public function setSine(DoSine:Bool, Speed:Float, Amount:Float):Void {
+        sin = DoSine;
+        sinSpeed = Speed;
+        sinAmount = Amount;
     }
 }

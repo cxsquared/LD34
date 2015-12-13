@@ -25,6 +25,9 @@ class MenuState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+
+        FlxG.mouse.visible = true;
+
         var background = new FlxSprite(0,0, AssetPaths.background__png);
         add(background);
 
