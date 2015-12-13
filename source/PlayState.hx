@@ -32,6 +32,7 @@ class PlayState extends FlxState
 
     public var score = 0;
     var scoreText:FlxText;
+    var isLevelDone = false;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -45,6 +46,7 @@ class PlayState extends FlxState
 
         startText = new FlxText(0,0,0,72);
         startText.text = "3";
+        startText.color = FlxColor.GRAY;
         startText.x = FlxG.width/2 - startText.width/2;
         startText.y = FlxG.height/2 - startText.height/2;
         add(startText);
@@ -69,8 +71,37 @@ class PlayState extends FlxState
 
     private function startLevel(timer:FlxTimer):Void {
         startText.kill();
-        FlxG.sound.playMusic(AssetPaths.LD34Mix01_01__mp3, 1, false);
+        musicTrack.loadEmbedded(AssetPaths.LD34Mix01_01__mp3, false, false, onSongEnd);
+        musicTrack.play();
         startPulse();
+    }
+
+    private function onSongEnd():Void {
+        var endText = new FlxText(0,0,0,32);
+        endText.text = "Level Finished";
+        endText.color = FlxColor.GRAY;
+        endText.alpha = 0;
+        FlxTween.tween(endText, {alpha:1}, 1);
+        add(endText);
+        endText.x = FlxG.width/2 - 150;
+        endText.y = FlxG.height/2 - endText.height - endText.height/2 - 10;
+
+        scoreText.size = 32;
+        scoreText.y = FlxG.height/2 - scoreText.height/2;
+        scoreText.x = FlxG.width/2 - scoreText.height/2;
+        scoreText.alpha = 0;
+        FlxTween.tween(scoreText, {alpha:1}, 1);
+
+        var endText2 = new FlxText(0,0,0,32);
+        endText2.color = FlxColor.GRAY;
+        endText2.text = "Click to Restart";
+        endText2.alpha = 0;
+        FlxTween.tween(endText2, {alpha:1}, 1, {complete:function(tween:FlxTween):Void {
+            isLevelDone = true;
+        }});
+        add(endText2);
+        endText2.x = FlxG.width/2 - 150;
+        endText2.y = FlxG.height/2 + endText2.height/2 + 10;
     }
 
 /**
@@ -95,6 +126,10 @@ class PlayState extends FlxState
 
         if (startText.alive && startTimer.active) {
             startText.text = Std.string(Math.ceil(startTimer.timeLeft));
+        }
+
+        if (isLevelDone && FlxG.mouse.justPressed){
+            FlxG.switchState(new MenuState());
         }
 
         FlxG.watch.addQuick("Music Time", musicTrack.time/1000);
