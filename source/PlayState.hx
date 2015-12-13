@@ -1,5 +1,7 @@
 package;
 
+import flixel.effects.particles.FlxEmitterExt;
+import entities.Explosion;
 import entities.Bullet;
 import entities.Boss;
 import flixel.util.FlxColor;
@@ -39,6 +41,11 @@ class PlayState extends FlxState
     var boss:Boss;
     var player:FlxSprite;
 
+    var bossTriggerTime = 119.75;
+    var bossKillTime = 211.71;
+
+    var explosion:FlxEmitterExt;
+
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
@@ -66,6 +73,8 @@ class PlayState extends FlxState
         createPlayer();
 
         createUI();
+
+        createExplosion();
 	}
 
     private function startLevel(timer:FlxTimer):Void {
@@ -75,10 +84,20 @@ class PlayState extends FlxState
         startPulse();
     }
 
+    private function createExplosion():Void {
+        explosion = new FlxEmitterExt();
+        explosion.setRotation(0, 360);
+        explosion.setMotion(0, 5, 0.2, 360, 200, 1.8);
+        explosion.makeParticles("assets/images/red.png", 25, 0, true, 0);
+        explosion.setAlpha(1, 1, 0, 0);
+        add(explosion);
+    }
+
     private function createBoss():Void {
         boss = new Boss(0,0,this);
         boss.x = FlxG.width - boss.width;
         boss.y = FlxG.height/2 - boss.height/2;
+        boss.alpha = 0;
         add(boss);
     }
 
@@ -152,6 +171,11 @@ class PlayState extends FlxState
 
         updateTargets();
 
+        updateBoss();
+
+        if (score < 0){
+            score = 0;
+        }
         scoreText.text = Std.string(score);
 
         if (startText.alive && startTimer.active) {
@@ -170,6 +194,22 @@ class PlayState extends FlxState
         FlxG.watch.addQuick("Left Click", FlxG.mouse.justPressed);
         FlxG.watch.addQuick("Right Click", FlxG.mouse.justPressedRight);
         FlxG.watch.addQuick("Middle Click", FlxG.mouse.justPressedMiddle);
+    }
+
+    private function updateBoss():Void {
+        if (!boss.shouldDo && bossTriggerTime <= musicTrack.time/1000 && boss.alpha == 0 && boss.alive){
+            FlxTween.tween(boss, {alpha:1}, 2, {complete:function(tween:FlxTween):Void {
+                boss.shouldDo = true;
+            }});
+        }
+
+        if (boss.shouldDo && bossKillTime <= musicTrack.time/1000 && boss.alpha == 1) {
+            boss.explode();
+            boss.shouldDo = false;
+            FlxTween.tween(boss, {alpha:0}, 2, {complete:function(tween:FlxTween):Void {
+                boss.kill();
+            }});
+        }
     }
 
     private function onPlayerCollision(player:FlxSprite, bullet:Bullet):Void {
@@ -246,6 +286,11 @@ class PlayState extends FlxState
         }
 
         player.scale.set(newX, newY);
+    }
 
+    public function explode(X:Float, Y:Float):Void {
+        explosion.x = X;
+        explosion.y = Y;
+        explosion.start(true, 0.5, .1);
     }
 }

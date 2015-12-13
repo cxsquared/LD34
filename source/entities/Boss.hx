@@ -17,6 +17,8 @@ class Boss extends FlxSprite {
     var dir = 1;
     var speed = 100;
 
+    public var shouldDo = false;
+
     public function new(X:Float=0, Y:Float=0, PlayState:PlayState) {
         super(X, Y);
 
@@ -31,22 +33,34 @@ class Boss extends FlxSprite {
     override public function update():Void {
         super.update();
 
-        this.y += speed * FlxG.elapsed * dir;
+        if (shouldDo){
+            this.y += speed * FlxG.elapsed * dir;
 
-        if (this.y + this.height > FlxG.height || this.y < 0 ) {
-            dir = dir * -1;
+            if (this.y + this.height > FlxG.height || this.y < 0 ) {
+                dir = dir * -1;
+            }
         }
     }
 
     public function pulse():Void {
-        if (fireCounter%2 == 0){
-            fire();
-            if (FlxRandom.chanceRoll(33)){
-                dir *= -1;
+        if (shouldDo) {
+            if (fireCounter%2 == 0){
+                if (FlxRandom.chanceRoll(66)){
+                    fire();
+                }
+                if (FlxRandom.chanceRoll(33)){
+                    dir *= -1;
+                }
             }
-        }
 
-        fireCounter++;
+            fireCounter++;
+        }
+    }
+
+    public function explode():Void {
+        for (i in 0...75) {
+            var explode = new Explosion(FlxRandom.floatRanged(this.x, this.x+this.width), FlxRandom.floatRanged(this.y, this.y+this.height), this.state);
+        }
     }
 
     private function fire():Void {

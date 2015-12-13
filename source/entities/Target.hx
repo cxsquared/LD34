@@ -1,4 +1,7 @@
 package entities;
+import flixel.effects.particles.FlxParticle;
+import flixel.effects.particles.FlxEmitterExt;
+import flixel.util.FlxMath;
 import flixel.tweens.FlxEase;
 import flixel.plugin.TweenManager;
 import flixel.util.FlxRandom;
@@ -28,10 +31,6 @@ class Target extends FlxSprite {
     var state:PlayState;
 
     var scoreIncrease = 5;
-
-    // Temp vars
-    public var w = 75;
-    public var h = 75;
 
     public function new(X:Float = 0, Y:Float = 0, Type:ClickType, State:PlayState) {
         super(X, Y);
@@ -100,6 +99,7 @@ class Target extends FlxSprite {
                         FlxG.log.add("Both Clicked on Target");
                         state.score += scoreIncrease;
                         state.setPlayerScale(0.05);
+                        state.explode(this.x + this.width/2, this.y + this.height/2);
                         kill();
                     }
                 case ClickType.LEFTCLICK:
@@ -107,6 +107,7 @@ class Target extends FlxSprite {
                         FlxG.log.add("Left Clicked on Target");
                         state.score += scoreIncrease;
                         state.setPlayerScale(0.05);
+                        state.explode(this.x + this.width/2, this.y + this.height/2);
                         kill();
                     }
                 case ClickType.RIGHTCLICK:
@@ -114,13 +115,15 @@ class Target extends FlxSprite {
                         FlxG.log.add("Right Clicked on Target");
                         state.score += scoreIncrease;
                         state.setPlayerScale(0.05);
+                        state.explode(this.x + this.width/2, this.y + this.height/2);
                         kill();
                     }
                 case ClickType.RANDOM:
                     FlxG.log.add("This Shouldn't be called");
             }
-            if (this.alive) {
+            if (this.alive && this.type != ClickType.BOTHCLICK) {
                 state.score--;
+                playGlicth();
                 state.setPlayerScale(-0.05);
                 kill();
             }
@@ -130,5 +133,20 @@ class Target extends FlxSprite {
     public function pulse():Void {
         this.scale.set(1.15, 1.15);
         FlxTween.tween(this.scale, {x:1, y:1}, .25);
+    }
+
+    private function playGlicth():Void {
+        var rand = FlxRandom.float();
+        if (rand > .8){
+            FlxG.sound.play("assets/sounds/glitch00.wav", 0.25);
+        } else if (rand > .6){
+            FlxG.sound.play("assets/sounds/glitch01.wav", 0.25);
+        } else if (rand > .4){
+            FlxG.sound.play("assets/sounds/glitch02.wav", 0.25);
+        } else if (rand > .2){
+            FlxG.sound.play("assets/sounds/glitch03.wav", 0.25);
+        } else {
+            FlxG.sound.play("assets/sounds/glitch04.wav", 0.25);
+        }
     }
 }
