@@ -1,5 +1,6 @@
 package;
 
+import entities.Boss;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -33,6 +34,8 @@ class PlayState extends FlxState
     public var score = 0;
     var scoreText:FlxText;
     var isLevelDone = false;
+
+    var boss:Boss;
 
 	/**
 	 * Function that is called up when to state is created to set it up. 
@@ -69,6 +72,8 @@ class PlayState extends FlxState
 
         startTimer = new FlxTimer();
         startTimer.start(3, startLevel, 1);
+
+        createBoss();
 	}
 
     private function startLevel(timer:FlxTimer):Void {
@@ -76,6 +81,13 @@ class PlayState extends FlxState
         musicTrack.loadEmbedded(AssetPaths.LD34Mix01_01__mp3, false, false, onSongEnd);
         musicTrack.play();
         startPulse();
+    }
+
+    private function createBoss():Void {
+        boss = new Boss(0,0,this);
+        boss.x = FlxG.width - boss.width;
+        boss.y = FlxG.height/2 - boss.height/2;
+        add(boss);
     }
 
     private function onSongEnd():Void {
@@ -163,6 +175,7 @@ class PlayState extends FlxState
 
     private function onPulse(timer:FlxTimer):Void {
         targets.callAll("pulse");
+        boss.pulse();
         scoreText.scale.set(1.15, 1.15);
         FlxTween.tween(scoreText.scale, {x:1, y:1}, bpm/2, {ease:FlxEase.expoOut});
     }

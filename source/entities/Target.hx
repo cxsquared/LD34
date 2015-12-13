@@ -76,6 +76,7 @@ class Target extends FlxSprite {
     }
 
     override public function update():Void {
+        super.update();
         if (triggerTime <= musicTime && !this.visible) {
             this.alpha = 0;
             this.visible = true;
