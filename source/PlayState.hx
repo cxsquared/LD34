@@ -118,7 +118,10 @@ class PlayState extends FlxState
 
     private function startPulse():Void {
         var pulseTimer = new FlxTimer();
-        pulseTimer.start(bpm, onPulse, 0);
+        var prePulseTimer = new FlxTimer();
+        prePulseTimer.start(0.25, function(timer:FlxTimer):Void{
+            pulseTimer.start(bpm, onPulse, 0);
+        }, 1);
     }
 
     private function onPulse(timer:FlxTimer):Void {
@@ -143,7 +146,7 @@ class PlayState extends FlxState
                     tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RANDOM, this);
                 }
 
-                tar.setTimes(Std.parseFloat(options[3]), Std.parseFloat(options[4]), bpm/2);
+                tar.setTimes(Std.parseFloat(options[3]), Std.parseFloat(options[4]), bpm/1.5);
                 targets.add(tar);
             }
         }
