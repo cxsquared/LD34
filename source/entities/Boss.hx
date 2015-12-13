@@ -10,7 +10,7 @@ class Boss extends FlxSprite {
     var gunSpots = [new FlxPoint(40,24), new FlxPoint(48, 59), new FlxPoint(64, 87), new FlxPoint(64, 113), new FlxPoint(48, 142), new FlxPoint(40, 177)];
 
     var state:PlayState;
-    var bullets:FlxTypedGroup<Bullet>;
+    public var bullets:FlxTypedGroup<Bullet>;
 
     var fireCounter = 1;
 

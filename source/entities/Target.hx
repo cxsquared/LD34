@@ -84,6 +84,8 @@ class Target extends FlxSprite {
         }
 
         if (targetTime+difficultyOffset <= musicTime) {
+            state.score--;
+            state.setPlayerScale(-0.05);
             this.kill();
         }
     }
@@ -97,22 +99,30 @@ class Target extends FlxSprite {
                     if ((FlxG.mouse.justPressed && FlxG.mouse.pressedRight) || (FlxG.mouse.justPressedRight && FlxG.mouse.pressed) ){
                         FlxG.log.add("Both Clicked on Target");
                         state.score += scoreIncrease;
+                        state.setPlayerScale(0.05);
                         kill();
                     }
                 case ClickType.LEFTCLICK:
-                    if (FlxG.mouse.justPressed && !FlxG.mouse.justPressedRight){
+                    if (FlxG.mouse.justPressed && !FlxG.mouse.pressedRight){
                         FlxG.log.add("Left Clicked on Target");
                         state.score += scoreIncrease;
+                        state.setPlayerScale(0.05);
                         kill();
                     }
                 case ClickType.RIGHTCLICK:
-                    if (FlxG.mouse.justPressedRight && !FlxG.mouse.justPressed){
+                    if (FlxG.mouse.justPressedRight && !FlxG.mouse.pressed){
                         FlxG.log.add("Right Clicked on Target");
                         state.score += scoreIncrease;
+                        state.setPlayerScale(0.05);
                         kill();
                     }
                 case ClickType.RANDOM:
                     FlxG.log.add("This Shouldn't be called");
+            }
+            if (this.alive) {
+                state.score--;
+                state.setPlayerScale(-0.05);
+                kill();
             }
         }
     }

@@ -1,5 +1,6 @@
 package;
 
+import entities.Bullet;
 import entities.Boss;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxEase;
@@ -163,10 +164,18 @@ class PlayState extends FlxState
 
         updatePlayer();
 
+        FlxG.collide(player, boss.bullets, onPlayerCollision);
+
         FlxG.watch.addQuick("Music Time", musicTrack.time/1000);
         FlxG.watch.addQuick("Left Click", FlxG.mouse.justPressed);
         FlxG.watch.addQuick("Right Click", FlxG.mouse.justPressedRight);
         FlxG.watch.addQuick("Middle Click", FlxG.mouse.justPressedMiddle);
+    }
+
+    private function onPlayerCollision(player:FlxSprite, bullet:Bullet):Void {
+        score--;
+        this.setPlayerScale(-0.05);
+        bullet.kill();
     }
 
 
@@ -228,12 +237,12 @@ class PlayState extends FlxState
         var newX = player.scale.x + IncreaseAmount;
         var newY = player.scale.y + IncreaseAmount;
 
-        if (newX > 1){
-            newX = 1;
-        }
-
-        if (newY > 1) {
-            newY = 1;
+        if (newX > 1.25 || newY > 1.2){
+            newX = 1.25;
+            newY = 1.15;
+        } else if (newX < .5 || newY < .5){
+            newX = .5;
+            newY = .5;
         }
 
         player.scale.set(newX, newY);
