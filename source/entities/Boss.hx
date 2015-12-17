@@ -1,4 +1,6 @@
 package entities;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.util.FlxMath;
 import flixel.group.FlxTypedGroup;
@@ -55,6 +57,9 @@ class Boss extends FlxSprite {
 
             fireCounter++;
         }
+
+        this.scale.set(1.05, 1.05);
+        FlxTween.tween(this.scale, {x:1, y:1}, state.bpm/2, {ease:FlxEase.expoIn});
     }
 
     public function explode():Void {
