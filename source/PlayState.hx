@@ -1,5 +1,6 @@
 package;
 
+import entities.TargetManager;
 import flixel.effects.particles.FlxEmitterExt;
 import entities.Explosion;
 import entities.Bullet;
@@ -27,7 +28,7 @@ import flixel.FlxState;
 class PlayState extends FlxState
 {
 
-    var targets:FlxTypedGroup<Target>;
+    public var targets:TargetManager;
     var musicTrack:FlxSound;
     public var bpm = .5;
 
@@ -67,8 +68,7 @@ class PlayState extends FlxState
         musicTrack = new FlxSound();
         FlxG.sound.music = musicTrack;
 
-        targets = new FlxTypedGroup<Target>();
-        parseTargets('assets/data/level00.txt');
+        targets = new TargetManager('assets/data/level00.txt', this);
         add(targets);
 
         createBoss();
@@ -296,28 +296,6 @@ class PlayState extends FlxState
         boss.pulse();
         scoreText.scale.set(1.15, 1.15);
         FlxTween.tween(scoreText.scale, {x:1, y:1}, bpm/2, {ease:FlxEase.expoOut});
-    }
-
-    private function parseTargets(file:String):Void {
-        var fileText = Assets.getText(file);
-        for (line in fileText.split('\n')) {
-            var options = line.split(',');
-            if (options[0] != "//"){
-                var tar:Target;
-                if (options[0] == "right"){
-                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RIGHTCLICK, this);
-                } else if (options[0] == "left"){
-                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.LEFTCLICK, this);
-                } else if (options[0] == "both") {
-                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.BOTHCLICK, this);
-                } else {
-                    tar = new Target(Std.parseFloat(options[1]),Std.parseFloat(options[2]), ClickType.RANDOM, this);
-                }
-
-                tar.setTimes(Std.parseFloat(options[3]), Std.parseFloat(options[4]), bpm/1.5);
-                targets.add(tar);
-            }
-        }
     }
 
     public function setPlayerScale(IncreaseAmount:Float):Void {

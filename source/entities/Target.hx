@@ -26,6 +26,8 @@ class Target extends FlxSprite {
     var type:ClickType;
     var musicTime:Float;
 
+    var shadow:FlxSprite;
+
     var pulseSizeOffset = 1.15;
     var bpm:Float;
     var state:PlayState;
@@ -39,6 +41,11 @@ class Target extends FlxSprite {
         this.state = State;
         this.bpm = State.bpm;
 
+        shadow = new FlxSprite(X,Y);
+        shadow.visible = false;
+        shadow.alpha = 0.25;
+        state.add(shadow);
+
         setType(Type);
     }
 
@@ -48,10 +55,13 @@ class Target extends FlxSprite {
         switch(type) {
             case ClickType.RIGHTCLICK:
                 loadGraphic(AssetPaths.rightTarget__png);
+                shadow.loadGraphic(AssetPaths.rightTarget__png);
             case ClickType.LEFTCLICK:
                 loadGraphic(AssetPaths.leftTarget__png);
+                shadow.loadGraphic(AssetPaths.leftTarget__png);
             case ClickType.BOTHCLICK:
                 loadGraphic(AssetPaths.bothTarget__png);
+                shadow.loadGraphic(AssetPaths.bothTarget__png);
             case ClickType.RANDOM:
                 var rand = FlxRandom.float();
                 if (rand > .66) {
@@ -76,16 +86,28 @@ class Target extends FlxSprite {
 
     override public function update():Void {
         super.update();
+
+        // Showing target
         if (triggerTime <= musicTime && !this.visible) {
-            this.alpha = 0;
+            //this.alpha = 0;
+            this.scale.set(0, 0);
             this.visible = true;
-            FlxTween.tween(this, {alpha:1}, bpm, {ease:FlxEase.expoIn});
+            shadow.visible = true;
+            //FlxTween.tween(this, {alpha:1}, bpm, {ease:FlxEase.expoIn});
+            FlxTween.tween(this.scale, {x:1, y:1}, targetTime-triggerTime);
         }
 
+        // Target not click in time
         if (targetTime+difficultyOffset <= musicTime) {
             state.score--;
             this.kill();
         }
+    }
+
+    override public function kill():Void {
+        state.targets.addTarget(1);
+        shadow.kill();
+        super.kill();
     }
 
     public function clicked(MusicTime):Void {
@@ -129,8 +151,8 @@ class Target extends FlxSprite {
     }
 
     public function pulse():Void {
-        this.scale.set(1.15, 1.15);
-        FlxTween.tween(this.scale, {x:1, y:1}, .25);
+        shadow.scale.set(1.15, 1.15);
+        FlxTween.tween(shadow.scale, {x:1, y:1}, .25);
     }
 
     private function playGlicth():Void {
