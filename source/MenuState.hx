@@ -8,7 +8,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxMath;
+import flixel.math.FlxMath;
 
 /**
  * A FlxState which can be used for the game's menu.
@@ -76,12 +76,12 @@ class MenuState extends FlxState
 	/**
 	 * Function that is called once every frame.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 
         if (FlxG.mouse.justPressed){
-            FlxTween.tween(title, {alpha:0}, 2, {complete:function(tween:FlxTween):Void {
+            FlxTween.tween(title, {alpha:0}, 2, {onComplete:function(tween:FlxTween):Void {
                 FlxG.sound.music.stop();
                 FlxG.sound.music.volume = 1;
                 FlxG.switchState(new PlayState());

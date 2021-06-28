@@ -2,7 +2,7 @@ package entities;
 import flixel.FlxG;
 import openfl.Assets;
 import entities.Target.ClickType;
-import flixel.group.FlxTypedGroup;
+import flixel.group.FlxGroup.FlxTypedGroup;
 class TargetManager extends FlxTypedGroup<Target> {
 
     var targetLines:Array<String>;
